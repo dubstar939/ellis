@@ -66,26 +66,42 @@ function encodeVarInt(num: number): number[] {
   return bytes;
 }
 
-const PRESET_CATEGORIES = {
+const PRESET_CATEGORIES: Record<'Genres' | 'Instruments' | 'Effects & Feel', { name: string, defaultVolume: number }[]> = {
   'Genres': [
-    'Bossa Nova', 'Minimal Techno', 'Drum and Bass', 'Post Punk', 'Shoegaze', 'Funk',
-    'Chiptune', 'Dubstep', 'K Pop', 'Neo Soul', 'Trip Hop', 'Thrash', 'Electronic', 'Ambient',
-    'Industrial', 'Lo-fi'
+    { name: 'Bossa Nova', defaultVolume: 0.75 }, { name: 'Minimal Techno', defaultVolume: 0.8 },
+    { name: 'Drum and Bass', defaultVolume: 0.85 }, { name: 'Post Punk', defaultVolume: 0.7 },
+    { name: 'Shoegaze', defaultVolume: 0.65 }, { name: 'Funk', defaultVolume: 0.75 },
+    { name: 'Chiptune', defaultVolume: 0.7 }, { name: 'Dubstep', defaultVolume: 0.85 },
+    { name: 'K Pop', defaultVolume: 0.8 }, { name: 'Neo Soul', defaultVolume: 0.7 },
+    { name: 'Trip Hop', defaultVolume: 0.75 }, { name: 'Thrash', defaultVolume: 0.9 },
+    { name: 'Electronic', defaultVolume: 0.8 }, { name: 'Ambient', defaultVolume: 0.5 },
+    { name: 'Industrial', defaultVolume: 0.8 }, { name: 'Lo-fi', defaultVolume: 0.6 }
   ],
   'Instruments': [
-    'Lush Strings', 'Sparkling Arpeggios', 'Staccato Rhythms', 'Punchy Kick', 'Rhythm', 'Melody', 'Harmony',
-    'Analog Synth', 'Digital Lead', 'Resonant Bass', 'Acoustic Piano', 'Sub Bass'
+    { name: 'Lush Strings', defaultVolume: 0.6 }, { name: 'Sparkling Arpeggios', defaultVolume: 0.7 },
+    { name: 'Staccato Rhythms', defaultVolume: 0.75 }, { name: 'Punchy Kick', defaultVolume: 0.9 },
+    { name: 'Rhythm', defaultVolume: 0.8 }, { name: 'Melody', defaultVolume: 0.8 },
+    { name: 'Harmony', defaultVolume: 0.7 }, { name: 'Analog Synth', defaultVolume: 0.75 },
+    { name: 'Digital Lead', defaultVolume: 0.75 }, { name: 'Resonant Bass', defaultVolume: 0.85 },
+    { name: 'Acoustic Piano', defaultVolume: 0.65 }, { name: 'Sub Bass', defaultVolume: 0.9 }
   ],
   'Effects & Feel': [
-    'Reverb', 'Delay', 'Distortion', 'Filter', 'Resonance', 'Cutoff', 'Decay', 'Sustain', 'Release', 'Attack',
-    'Legato', 'Vibrato', 'Glissando', 'Cinematic', 'Aggressive', 'Soothing', 'Experimental', 'High Fidelity'
+    { name: 'Reverb', defaultVolume: 0.5 }, { name: 'Delay', defaultVolume: 0.5 },
+    { name: 'Distortion', defaultVolume: 0.6 }, { name: 'Filter', defaultVolume: 0.55 },
+    { name: 'Resonance', defaultVolume: 0.6 }, { name: 'Cutoff', defaultVolume: 0.65 },
+    { name: 'Decay', defaultVolume: 0.5 }, { name: 'Sustain', defaultVolume: 0.55 },
+    { name: 'Release', defaultVolume: 0.5 }, { name: 'Attack', defaultVolume: 0.5 },
+    { name: 'Legato', defaultVolume: 0.55 }, { name: 'Vibrato', defaultVolume: 0.45 },
+    { name: 'Glissando', defaultVolume: 0.5 }, { name: 'Cinematic', defaultVolume: 0.7 },
+    { name: 'Aggressive', defaultVolume: 0.8 }, { name: 'Soothing', defaultVolume: 0.5 },
+    { name: 'Experimental', defaultVolume: 0.65 }, { name: 'High Fidelity', defaultVolume: 0.7 }
   ]
 };
 
 const MUSICAL_TERMS = [
-  ...PRESET_CATEGORIES['Genres'],
-  ...PRESET_CATEGORIES['Instruments'],
-  ...PRESET_CATEGORIES['Effects & Feel']
+  ...PRESET_CATEGORIES['Genres'].map(g => g.name),
+  ...PRESET_CATEGORIES['Instruments'].map(i => i.name),
+  ...PRESET_CATEGORIES['Effects & Feel'].map(e => e.name)
 ];
 
 interface SessionData {
@@ -1608,9 +1624,32 @@ class PromptDj extends LitElement {
     }
     .add-prompt-button-container {
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5vmin;
+      justify-content: flex-end;
       height: 100%;
       flex-shrink: 0;
+    }
+    .clear-all-btn {
+      background: rgba(220, 53, 69, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(220, 53, 69, 0.35);
+      padding: 0.8vmin 1.5vmin;
+      border-radius: 6px;
+      font-size: 1.25vmin;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .clear-all-btn:hover {
+      background: rgba(220, 53, 69, 0.85);
+      color: #fff;
+      border-color: #ff3b30;
+      box-shadow: 0 0 10px rgba(220, 53, 69, 0.4);
     }
     #settings-container {
       flex: 1;
@@ -1709,8 +1748,19 @@ class PromptDj extends LitElement {
     } else if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       this.resetApp();
+    } else if (e.key === 'v' || e.key === 'V') {
+      e.preventDefault();
+      this.cycleVizStyle();
     }
   };
+
+  private cycleVizStyle() {
+    const styles: ('waveform' | 'bar' | 'spectrum')[] = ['waveform', 'bar', 'spectrum'];
+    const currentIndex = styles.indexOf(this.vizStyle);
+    const nextIndex = (currentIndex + 1) % styles.length;
+    this.vizStyle = styles[nextIndex];
+    this.toastMessage.show(`Visualization style: ${this.vizStyle.charAt(0).toUpperCase() + this.vizStyle.slice(1)}`);
+  }
 
   override async firstUpdated() {
     if (!(process.env.API_KEY || process.env.GEMINI_API_KEY)) {
@@ -1951,7 +2001,12 @@ class PromptDj extends LitElement {
   }
 
   private async saveCurrentSession() {
-    const name = prompt('Session Name:', `Session ${new Date().toLocaleString()}`);
+    const dateStr = new Date().toLocaleDateString();
+    const firstActivePrompt = [...this.prompts.values()].find(p => p.weight > 0 && p.text.trim().length > 0);
+    const activeText = firstActivePrompt ? firstActivePrompt.text.trim() : '';
+    const suggestedName = activeText ? `${activeText} - ${dateStr}` : `Session - ${dateStr}`;
+
+    const name = prompt('Session Name:', suggestedName);
     if (!name) return;
 
     const sessionData: SessionData = {
@@ -2341,8 +2396,8 @@ class PromptDj extends LitElement {
           <button class="preset-tab-btn ${this.activePresetCategory === 'Effects & Feel' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Effects & Feel'}>Effects & Feel</button>
         </div>
         <div class="preset-genre-list">
-          ${PRESET_CATEGORIES[this.activePresetCategory].map(genre => html`
-            <button class="preset-btn" @click=${() => this.handleAddPromptWithText(genre)}>${genre}</button>
+          ${PRESET_CATEGORIES[this.activePresetCategory].map(item => html`
+            <button class="preset-btn" @click=${() => this.handleAddPromptWithText(item.name, item.defaultVolume)}>${item.name}</button>
           `)}
         </div>
       </div>
@@ -2355,6 +2410,7 @@ class PromptDj extends LitElement {
         </div>
         <div class="add-prompt-button-container">
           <add-prompt-button @click=${this.handleAddPrompt}></add-prompt-button>
+          <button class="clear-all-btn" @click=${this.handleClearAll}>Clear All</button>
         </div>
       </div>
 
@@ -2390,13 +2446,13 @@ class PromptDj extends LitElement {
     `;
   }
 
-  private async handleAddPromptWithText(text: string) {
+  private async handleAddPromptWithText(text: string, defaultVolume = 0.5) {
     const newPromptId = `prompt-${this.nextPromptId++}`;
     const usedColors = [...this.prompts.values()].map((p) => p.color);
     const newPrompt: Prompt = {
       promptId: newPromptId,
       text,
-      weight: 0.5,
+      weight: defaultVolume,
       color: getUnusedRandomColor(usedColors),
     };
     const newPrompts = new Map(this.prompts);
@@ -2405,6 +2461,19 @@ class PromptDj extends LitElement {
 
     await this.setSessionPrompts();
     this.requestUpdate();
+    this.dispatchPromptsChange();
+  }
+
+  private handleClearAll() {
+    if (!confirm('Are you sure you want to clear all prompts and reset to a clean state?')) {
+      return;
+    }
+    this.prompts = new Map();
+    this.nextPromptId = 0;
+    this.setSessionPrompts();
+    this.requestUpdate();
+    this.dispatchPromptsChange();
+    this.toastMessage.show('All prompts cleared.');
   }
 
   private resetApp() {
@@ -2414,6 +2483,7 @@ class PromptDj extends LitElement {
     this.settingsController.resetToDefaults();
     this.requestUpdate();
     this.setSessionPrompts();
+    this.dispatchPromptsChange();
   }
 
   private renderPrompts() {
