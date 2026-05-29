@@ -49,15 +49,43 @@ function throttle(func: (...args: unknown[]) => void, delay: number) {
   };
 }
 
+function encodeVarInt(num: number): number[] {
+  const bytes: number[] = [];
+  let value = num;
+  while (value > 0) {
+    let byteVal = value & 0x7F;
+    value >>>= 7;
+    if (bytes.length > 0) {
+      byteVal |= 0x80;
+    }
+    bytes.unshift(byteVal);
+  }
+  if (bytes.length === 0) {
+    bytes.push(0);
+  }
+  return bytes;
+}
+
+const PRESET_CATEGORIES = {
+  'Genres': [
+    'Bossa Nova', 'Minimal Techno', 'Drum and Bass', 'Post Punk', 'Shoegaze', 'Funk',
+    'Chiptune', 'Dubstep', 'K Pop', 'Neo Soul', 'Trip Hop', 'Thrash', 'Electronic', 'Ambient',
+    'Industrial', 'Lo-fi'
+  ],
+  'Instruments': [
+    'Lush Strings', 'Sparkling Arpeggios', 'Staccato Rhythms', 'Punchy Kick', 'Rhythm', 'Melody', 'Harmony',
+    'Analog Synth', 'Digital Lead', 'Resonant Bass', 'Acoustic Piano', 'Sub Bass'
+  ],
+  'Effects & Feel': [
+    'Reverb', 'Delay', 'Distortion', 'Filter', 'Resonance', 'Cutoff', 'Decay', 'Sustain', 'Release', 'Attack',
+    'Legato', 'Vibrato', 'Glissando', 'Cinematic', 'Aggressive', 'Soothing', 'Experimental', 'High Fidelity'
+  ]
+};
+
 const MUSICAL_TERMS = [
-  'Bossa Nova', 'Minimal Techno', 'Drum and Bass', 'Post Punk', 'Shoegaze', 'Funk',
-  'Chiptune', 'Lush Strings', 'Sparkling Arpeggios', 'Staccato Rhythms', 'Punchy Kick',
-  'Dubstep', 'K Pop', 'Neo Soul', 'Trip Hop', 'Thrash', 'Rhythm', 'Melody', 'Harmony',
-  'Syncopation', 'Tempo', 'Dynamics', 'Legato', 'Vibrato', 'Glissando', 'Chord',
-  'Arpeggio', 'Scale', 'Major', 'Minor', 'Reverb', 'Delay', 'Distortion', 'Filter',
-  'Resonance', 'Cutoff', 'Decay', 'Sustain', 'Release', 'Attack', 'Cinematic',
-  'Electronic', 'Ambient', 'Aggressive', 'Soothing', 'Experimental', 'Industrial',
-  'Lo-fi', 'High Fidelity', 'Analog', 'Digital', 'Monophonic', 'Polyphonic'
+  ...PRESET_CATEGORIES['Genres'],
+  ...PRESET_CATEGORIES['Instruments'],
+  ...PRESET_CATEGORIES['Effects & Feel']
 ];
 
 interface SessionData {
@@ -1410,11 +1438,42 @@ class PromptDj extends LitElement {
       height: 100%;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.4;
+      opacity: 0.55;
     }
     #visualizer {
       width: 100%;
       height: 100%;
+    }
+    .viz-menu {
+      position: absolute;
+      bottom: 2vmin;
+      right: 2vmin;
+      display: flex;
+      gap: 1vmin;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.5vmin;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 20;
+    }
+    .viz-menu-btn {
+      background: transparent;
+      color: #aaa;
+      border: none;
+      padding: 0.8vmin 1.5vmin;
+      font-size: 1.2vmin;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    .viz-menu-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .viz-menu-btn.active {
+      background: #5200ff;
+      color: #fff;
     }
     .top-controls {
       display: flex;
@@ -1430,20 +1489,54 @@ class PromptDj extends LitElement {
     }
     .presets-container {
       display: flex;
+      flex-direction: column;
+      gap: 1.5vmin;
+      padding: 1.5vmin;
+      background: #111e;
+      border-radius: 8px;
+      margin-top: 1vmin;
+      width: 100%;
+      max-width: 80%;
+      box-sizing: border-box;
+      z-index: 10;
+      border: 1px solid #333;
+    }
+    .presets-tabs {
+      display: flex;
+      gap: 1vmin;
+      border-bottom: 1px solid #333;
+      padding-bottom: 1vmin;
+    }
+    .preset-tab-btn {
+      background: transparent;
+      color: #888;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.5vmin 1vmin;
+      font-size: 1.4vmin;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .preset-tab-btn:hover {
+      color: #eee;
+    }
+    .preset-tab-btn.active {
+      color: #ff25f6;
+      border-bottom: 2px solid #ff25f6;
+    }
+    .preset-genre-list {
+      display: flex;
       flex-wrap: wrap;
       gap: 1vmin;
-      justify-content: center;
-      padding: 1vmin;
-      background: #0009;
-      border-radius: 5px;
-      margin-top: 1vmin;
-      max-width: 80%;
-      z-index: 10;
+      justify-content: flex-start;
+      max-height: 12vmin;
+      overflow-y: auto;
     }
     .preset-btn {
-      background: #333;
+      background: #2a2a2a;
       color: #eee;
-      border: 1px solid #666;
+      border: 1px solid #444;
       border-radius: 4px;
       padding: 0.5vmin 1vmin;
       font-size: 1.2vmin;
@@ -1569,6 +1662,8 @@ class PromptDj extends LitElement {
 
   @state() private savedSessions: SessionData[] = [];
   @state() private showSessionsModal = false;
+  @state() private activePresetCategory: 'Genres' | 'Instruments' | 'Effects & Feel' = 'Genres';
+  @state() private vizStyle: 'waveform' | 'bar' | 'spectrum' = 'waveform';
 
   @query('play-pause-button') private playPauseButton!: PlayPauseButton;
   @query('toast-message') private toastMessage!: ToastMessage;
@@ -1586,12 +1681,56 @@ class PromptDj extends LitElement {
     this.dataArray = new Uint8Array(bufferLength);
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  override disconnectedCallback() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
+    super.disconnectedCallback();
+  }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.getAttribute('contenteditable') === 'true')) {
+      return;
+    }
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      this.handlePlayPause();
+    } else if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault();
+      this.handleAddPrompt();
+    } else if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      this.resetApp();
+    }
+  };
+
   override async firstUpdated() {
     if (!(process.env.API_KEY || process.env.GEMINI_API_KEY)) {
       this.toastMessage.show('Gemini API key is missing. Please check your settings.');
       console.error('API_KEY is not defined in the environment.');
       return;
     }
+    
+    // Set up ResizeObserver for responsive canvas scaling without fixed coordinates
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        this.canvas.width = width || 800;
+        this.canvas.height = height || 400;
+      }
+    });
+    if (this.canvas.parentElement) {
+      resizeObserver.observe(this.canvas.parentElement);
+    }
+
     await this.connectToSession();
     this.startVisualization();
     this.loadSavedSessions();
@@ -1603,34 +1742,212 @@ class PromptDj extends LitElement {
 
     const draw = () => {
       this.animationId = requestAnimationFrame(draw);
-      this.analyserNode.getByteTimeDomainData(this.dataArray);
-
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#5200ff';
-      ctx.beginPath();
 
-      const sliceWidth = (this.canvas.width * 1.0) / this.dataArray.length;
-      let x = 0;
+      if (this.vizStyle === 'waveform') {
+        this.analyserNode.getByteTimeDomainData(this.dataArray);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#5200ff';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#5200ff';
+        ctx.beginPath();
 
-      for (let i = 0; i < this.dataArray.length; i++) {
-        const v = this.dataArray[i] / 128.0;
-        const y = (v * this.canvas.height) / 2;
+        const sliceWidth = (this.canvas.width * 1.0) / this.dataArray.length;
+        let x = 0;
 
-        if (i === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
+        for (let i = 0; i < this.dataArray.length; i++) {
+          const v = this.dataArray[i] / 128.0;
+          const y = (v * this.canvas.height) / 2;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
         }
 
-        x += sliceWidth;
-      }
+        ctx.lineTo(this.canvas.width, this.canvas.height / 2);
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset
+      } else if (this.vizStyle === 'bar') {
+        this.analyserNode.getByteFrequencyData(this.dataArray);
+        ctx.shadowBlur = 0;
+        
+        const barWidth = (this.canvas.width / this.dataArray.length) * 1.5;
+        let x = 0;
 
-      ctx.lineTo(this.canvas.width, this.canvas.height / 2);
-      ctx.stroke();
+        for (let i = 0; i < this.dataArray.length; i++) {
+          const percent = this.dataArray[i] / 255;
+          const barHeight = percent * this.canvas.height * 0.85;
+
+          const grad = ctx.createLinearGradient(0, this.canvas.height - barHeight, 0, this.canvas.height);
+          grad.addColorStop(0, '#2af6de');
+          grad.addColorStop(1, '#5200ff');
+          ctx.fillStyle = grad;
+
+          ctx.fillRect(x, this.canvas.height - barHeight, barWidth - 2, barHeight);
+          x += barWidth;
+        }
+      } else if (this.vizStyle === 'spectrum') {
+        this.analyserNode.getByteFrequencyData(this.dataArray);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#ff25f6';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff25f6';
+        ctx.beginPath();
+
+        const sliceWidth = (this.canvas.width * 1.0) / (this.dataArray.length - 1);
+        let x = 0;
+        ctx.moveTo(0, this.canvas.height);
+
+        for (let i = 0; i < this.dataArray.length; i++) {
+          const percent = this.dataArray[i] / 255;
+          const y = this.canvas.height - percent * this.canvas.height * 0.85;
+
+          if (i === 0) {
+            ctx.lineTo(x, y);
+          } else {
+            const nextX = x + sliceWidth;
+            const nextPercent = this.dataArray[Math.min(i + 1, this.dataArray.length - 1)] / 255;
+            const nextY = this.canvas.height - nextPercent * this.canvas.height * 0.85;
+            ctx.quadraticCurveTo(x, y, (x + nextX) / 2, (y + nextY) / 2);
+          }
+          x += sliceWidth;
+        }
+
+        ctx.lineTo(this.canvas.width, this.canvas.height);
+        ctx.stroke();
+
+        const grad = ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        grad.addColorStop(0, 'rgba(255, 37, 246, 0.4)');
+        grad.addColorStop(1, 'rgba(82, 0, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.shadowBlur = 0; // reset
+        ctx.lineTo(this.canvas.width, this.canvas.height);
+        ctx.lineTo(0, this.canvas.height);
+        ctx.closePath();
+        ctx.fill();
+      }
     };
 
     draw();
+  }
+
+  private exportAsMidi() {
+    const activePrompts = Array.from(this.prompts.values()).filter(p => p.weight > 0);
+    if (activePrompts.length === 0) {
+      this.toastMessage.show('Please add or enable at least one prompt with weight > 0 to export.');
+      return;
+    }
+
+    const buildMidiTrackBytes = (events: { delta: number, bytes: number[] }[]): number[] => {
+      const trackData: number[] = [];
+      for (const ev of events) {
+        trackData.push(...encodeVarInt(ev.delta));
+        trackData.push(...ev.bytes);
+      }
+      trackData.push(0x00, 0xFF, 0x2F, 0x00);
+
+      const len = trackData.length;
+      return [
+        0x4D, 0x54, 0x72, 0x6B, // "MTrk"
+        (len >> 24) & 0xFF,
+        (len >> 16) & 0xFF,
+        (len >> 8) & 0xFF,
+        len & 0xFF,
+        ...trackData
+      ];
+    };
+
+    const numTracks = 1 + activePrompts.length;
+    const header = [
+      0x4D, 0x54, 0x68, 0x64, // "MThd"
+      0x00, 0x00, 0x00, 0x06, // length of header (6)
+      0x00, 0x01,             // Format 1 (multitrack)
+      (numTracks >> 8) & 0xFF,
+      numTracks & 0xFF,       // number of tracks
+      0x00, 0x78              // Ticks per quarter note (120 ticks)
+    ];
+
+    const tracks: number[][] = [];
+
+    // Tempo Track
+    const tempoEvents = [
+      { delta: 0, bytes: [0xFF, 0x03, 0x05, 0x65, 0x6C, 0x6C, 0x69, 0x73] }, // track name: "ellis"
+      { delta: 0, bytes: [0xFF, 0x51, 0x03, 0x07, 0xA1, 0x20] } // 120 bpm
+    ];
+    tracks.push(buildMidiTrackBytes(tempoEvents));
+
+    // Active Prompts Tracks
+    activePrompts.forEach((prompt, idx) => {
+      const events: { delta: number, bytes: number[] }[] = [];
+      
+      const textBytes = new TextEncoder().encode(prompt.text);
+      events.push({
+        delta: 0,
+        bytes: [0xFF, 0x03, textBytes.length, ...Array.from(textBytes)]
+      });
+
+      const weightText = `Weight: ${prompt.weight.toFixed(2)}`;
+      const weightBytes = new TextEncoder().encode(weightText);
+      events.push({
+        delta: 0,
+        bytes: [0xFF, 0x01, weightBytes.length, ...Array.from(weightBytes)]
+      });
+
+      let channel = idx % 16;
+      if (channel === 9) channel = 10;
+      const program = (idx * 8) % 128; // Spread sound changes
+      events.push({
+        delta: 0,
+        bytes: [0xC0 | channel, program]
+      });
+
+      const textToUse = prompt.text || 'Ambient';
+      const velocity = Math.min(127, Math.max(20, Math.round((prompt.weight / 2.0) * 127)));
+      
+      const scale = [60, 62, 64, 67, 69, 72, 74, 76, 79, 81]; // C major pentatonic
+      
+      for (let step = 0; step < 16; step++) {
+        const charCode = textToUse.charCodeAt(step % textToUse.length);
+        const note = scale[charCode % scale.length];
+
+        const onDelta = step === 0 ? 0 : 12;
+        events.push({
+          delta: onDelta,
+          bytes: [0x90 | channel, note, velocity] // Note On
+        });
+
+        events.push({
+          delta: 48,
+          bytes: [0x80 | channel, note, 0x00] // Note Off
+        });
+      }
+
+      tracks.push(buildMidiTrackBytes(events));
+    });
+
+    const midiFileContent = new Uint8Array([
+      ...header,
+      ...tracks.flat()
+    ]);
+
+    const blob = new Blob([midiFileContent], { type: 'audio/midi' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ellis-patterns-${Date.now()}.mid`;
+    document.body.appendChild(a);
+    a.click();
+    
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+
+    this.toastMessage.show('MIDI configurations exported to MIDI file!');
   }
 
   private async saveCurrentSession() {
@@ -1792,6 +2109,7 @@ class PromptDj extends LitElement {
     this.dispatchEvent(
       new CustomEvent('prompts-changed', {detail: this.prompts}),
     );
+    setStoredPrompts(this.prompts);
   }
 
   private handlePromptChanged(e: CustomEvent<Prompt>) {
@@ -1995,12 +2313,18 @@ class PromptDj extends LitElement {
       <div id="background" style=${styleMap({background: this.makeBackground()})}></div>
       <div class="viz-container">
         <canvas id="visualizer" width="800" height="400"></canvas>
+        <div class="viz-menu" style="pointer-events: auto;">
+          <button class="viz-menu-btn ${this.vizStyle === 'waveform' ? 'active' : ''}" @click=${() => this.vizStyle = 'waveform'}>Waveform</button>
+          <button class="viz-menu-btn ${this.vizStyle === 'bar' ? 'active' : ''}" @click=${() => this.vizStyle = 'bar'}>Bar Graph</button>
+          <button class="viz-menu-btn ${this.vizStyle === 'spectrum' ? 'active' : ''}" @click=${() => this.vizStyle = 'spectrum'}>Frequency Spectrum</button>
+        </div>
       </div>
 
       <div class="top-controls">
         <div class="session-controls">
           <button class="btn secondary" @click=${() => this.showSessionsModal = true}>My Sessions</button>
           <button class="btn" @click=${this.saveCurrentSession}>Save Session</button>
+          <button class="btn" style="background: #2575fc;" @click=${this.exportAsMidi}>Export MIDI</button>
         </div>
         <div class="playback-container">
           <reset-button @click=${this.resetApp}></reset-button>
@@ -2011,9 +2335,16 @@ class PromptDj extends LitElement {
       </div>
 
       <div class="presets-container">
-        ${MUSICAL_TERMS.slice(0, 16).map(genre => html`
-          <button class="preset-btn" @click=${() => this.handleAddPromptWithText(genre)}>${genre}</button>
-        `)}
+        <div class="presets-tabs">
+          <button class="preset-tab-btn ${this.activePresetCategory === 'Genres' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Genres'}>Genres</button>
+          <button class="preset-tab-btn ${this.activePresetCategory === 'Instruments' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Instruments'}>Instruments</button>
+          <button class="preset-tab-btn ${this.activePresetCategory === 'Effects & Feel' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Effects & Feel'}>Effects & Feel</button>
+        </div>
+        <div class="preset-genre-list">
+          ${PRESET_CATEGORIES[this.activePresetCategory].map(genre => html`
+            <button class="preset-btn" @click=${() => this.handleAddPromptWithText(genre)}>${genre}</button>
+          `)}
+        </div>
       </div>
 
       <div class="prompts-area">
