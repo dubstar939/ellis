@@ -13,8 +13,16 @@ import {repeat} from 'lit/directives/repeat.js';
 import { GoogleGenAI, type LiveMusicGenerationConfig, type LiveMusicServerMessage, type LiveMusicSession } from '@google/genai';
 import {decode, decodeAudioData} from './utils';
 
+const getApiKey = () => {
+  try {
+    return process.env.API_KEY || process.env.GEMINI_API_KEY || '';
+  } catch (e) {
+    return '';
+  }
+};
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY,
+  apiKey: getApiKey(),
   apiVersion: 'v1alpha',
 });
 let model = 'lyria-realtime-exp';
