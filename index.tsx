@@ -104,6 +104,78 @@ const MUSICAL_TERMS = [
   ...PRESET_CATEGORIES['Effects & Feel'].map(e => e.name)
 ];
 
+const LOOPER_ROWS = [
+  {
+    category: 'Bass' as const,
+    color: '#ff4b4b',
+    pads: [
+      { name: 'Heavy 808 Sub', prompt: 'Deep booming 808 sub-bass trap glide running intense low-freq rumble patterns', volume: 0.9 },
+      { name: 'Mod Wobble', prompt: 'Squelching modulated LFO dubstep wobble growl bass heavy digital grit tear', volume: 0.8 },
+      { name: 'Savage Screech', prompt: 'Piercing metallic industrial riddim bass pitch slides aggressive cyber growls', volume: 0.75 },
+      { name: 'Sub Glides', prompt: 'Sliding sub-octave heavy brassy trap 808 bass slides saturated analog warmth', volume: 0.85 }
+    ]
+  },
+  {
+    category: 'Beats' as const,
+    color: '#3b82f6',
+    pads: [
+      { name: 'Trap Crisp Roll', prompt: 'Crisp half-time trap beat with explosive sub kick, sharp snappy wooden snare, and ultra-fast complex stuttering hi-hat rolls', volume: 0.9 },
+      { name: 'Riddim Clack', prompt: 'Aggressive heavy-stepping riddim dubstep drum stomp half-time pacing with flat metallic clap snares', volume: 0.85 },
+      { name: 'Phonk Cowbell', prompt: 'Fast-paced phonk trap beat bouncy snappy hi-hats rolling fast distorted cowbells with deep sub kicks', volume: 0.8 },
+      { name: 'Dubstep Stomp', prompt: 'Classic UK dubstep heavy punchy kick snappy ringy snare on beat three spacey background reverb delays', volume: 0.9 }
+    ]
+  },
+  {
+    category: 'FX' as const,
+    color: '#a855f7',
+    pads: [
+      { name: 'Swell Riser', prompt: 'Massive long mechanical pitch-rising noise sweep tension builder dramatic snare roll riser', volume: 0.6 },
+      { name: 'Sub Drop Boom', prompt: 'Massive stereo sub-bass drop impact sound wave explosion atmospheric room rumble', volume: 0.7 },
+      { name: 'Laser Glitch', prompt: 'Fast stuttering computer error glitch sound cuts pitch-shifting robot squelches', volume: 0.55 },
+      { name: 'Dub siren Echo', prompt: 'Classic dubstep tape delay spring feedback dub-siren laser sweep sound', volume: 0.65 }
+    ]
+  },
+  {
+    category: 'Guitar' as const,
+    color: '#ec4899',
+    pads: [
+      { name: 'Dark Trap Pluck', prompt: 'Melancholic dark acoustic trap acoustic guitar loop minor-scale fast plucks and vinyl cracks', volume: 0.7 },
+      { name: 'Phonk Metal', prompt: 'Heavily distorted aggressive phonk electric guitar dark rhythmic power-chord chugs', volume: 0.75 },
+      { name: 'Emo Acoustic', prompt: 'Warm reverberant ambient electric guitar fingerstyle melodies emo trap intro style', volume: 0.65 },
+      { name: 'Cyber Wave', prompt: 'Chorus phased guitar arpeggios spatial 80s styled synthesizer-guitar chords', volume: 0.6 }
+    ]
+  },
+  {
+    category: 'Keyboard' as const,
+    color: '#10b981',
+    pads: [
+      { name: 'Haunting Piano', prompt: 'Gothic gloomy grand piano melody in minor scale dark trap cinematic feel', volume: 0.7 },
+      { name: 'Cosmic Swell', prompt: 'Slow sweeping majestic celestial analog virtual synthesizer spacey drone swells', volume: 0.6 },
+      { name: 'Chilled Rhodes', prompt: 'Sweet vintage warm Rhodes electric piano jazzy chords detuned tape wow and flutter', volume: 0.65 },
+      { name: 'Vocal Choir', prompt: 'Dreamy wide atmospheric retro synth vocal choir synthesiser pad background', volume: 0.6 }
+    ]
+  },
+  {
+    category: 'Synth' as const,
+    color: '#f59e0b',
+    pads: [
+      { name: 'Icy Bells Chime', prompt: 'High-pitched crystal trap synth bell run sparkling digital chime pattern', volume: 0.75 },
+      { name: 'Riddim Screech', prompt: 'Screaming metallic lead synth loop rhythmic dubstep laser screech patch', volume: 0.7 },
+      { name: 'Super Saw Arp', prompt: 'Trance-inspired fast energetic supersaw synthesizer arpeggios uplifting bright pattern', volume: 0.8 },
+      { name: 'Retro Chip Lick', prompt: 'Playful retro 8-bit chip-synth game console bleeps and high speed runs', volume: 0.65 }
+    ]
+  }
+];
+
+const CATEGORY_ICONS = {
+  Bass: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="4" ry="4"/><path d="M12 2v8"/><ellipse cx="12" cy="6" rx="2" ry="2"/></svg>`,
+  Beats: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>`,
+  FX: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  Guitar: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><path d="M9 10h12"/><path d="M9 14h12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  Keyboard: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M6 3v10"/><path d="M10 3v10"/><path d="M14 3v10"/><path d="M18 3v10"/><path d="M2 13h20"/><path d="M6 13v5"/><path d="M10 13v5"/><path d="M14 13v5"/><path d="M18 13v5"/></svg>`,
+  Synth: html`<svg viewBox="0 0 24 24" fill="none" class="category-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`
+};
+
 interface SessionData {
   id: string;
   name: string;
@@ -1387,6 +1459,16 @@ class SettingsController extends LitElement {
   }
 }
 
+interface HistorySnapshot {
+  prompts: Map<string, Prompt>;
+  activePads: Record<string, number | null>;
+  viewMode: 'dj' | 'looper';
+  looperRowOrder: string[];
+  rowVolumes: Record<string, number>;
+  rowMuted: Record<string, boolean>;
+  rowSoloed: Record<string, boolean>;
+}
+
 /** Component for the PromptDJ UI. */
 @customElement('prompt-dj')
 class PromptDj extends LitElement {
@@ -1454,11 +1536,103 @@ class PromptDj extends LitElement {
       height: 100%;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.55;
     }
     #visualizer {
       width: 100%;
       height: 100%;
+      opacity: 0.55;
+    }
+    .connection-status-overlay {
+      position: absolute;
+      top: 2vmin;
+      left: 2vmin;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1vmin;
+      max-width: 60%;
+      background: rgba(10, 10, 15, 0.9);
+      border: 1px solid rgba(220, 53, 69, 0.4);
+      padding: 1.5vmin 2vmin;
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      z-index: 20;
+      pointer-events: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .connection-status-overlay.success {
+      border: 1px solid rgba(40, 167, 69, 0.2);
+      max-width: max-content;
+      background: rgba(10, 10, 15, 0.65);
+      padding: 1vmin 1.5vmin;
+    }
+    .connection-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 1vmin;
+    }
+    .status-dot {
+      width: 1vmin;
+      height: 1vmin;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot.online {
+      background: #28a745;
+      box-shadow: 0 0 10px #28a745;
+      animation: pulse 1.5s infinite alternate;
+    }
+    .status-dot.offline {
+      background: #dc3545;
+      box-shadow: 0 0 10px #dc3545;
+      animation: pulse-red 1s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+    @keyframes pulse-red {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    .status-text {
+      font-size: 1.4vmin;
+      font-weight: 600;
+      color: #eee;
+    }
+    .connection-error-desc {
+      font-size: 1.25vmin;
+      color: #ccc;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .retry-connect-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8vmin;
+      background: #5200ff;
+      color: #fff;
+      border: none;
+      padding: 0.8vmin 1.6vmin;
+      font-size: 1.25vmin;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      margin-top: 0.5vmin;
+    }
+    .retry-connect-btn:hover {
+      background: #7133ff;
+      transform: translateY(-1px);
+    }
+    .retry-connect-btn svg {
+      animation: spin 3s linear infinite paused;
+    }
+    .retry-connect-btn:active svg {
+      animation-play-state: running;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
     .viz-menu {
       position: absolute;
@@ -1674,6 +1848,497 @@ class PromptDj extends LitElement {
       max-width: 16vmin;
       flex: 1;
     }
+
+    /* Elegant mode segmented tab container */
+    .mode-selector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5vmin;
+      margin: 1vmin 0 2vmin 0;
+      z-index: 10;
+    }
+    .mode-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2vmin;
+      background: rgba(26, 26, 36, 0.6);
+      color: #8a8a9e;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1vmin 2.5vmin;
+      border-radius: 30px;
+      font-family: 'Space Grotesk', 'Google Sans', sans-serif;
+      font-size: 1.4vmin;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(12px);
+    }
+    .mode-tab:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(36, 36, 50, 0.85);
+    }
+    .mode-tab.active {
+      background: #ff25f6;
+      color: #fff;
+      border-color: #ff25f6;
+      box-shadow: 0 0 20px rgba(255, 37, 246, 0.45);
+    }
+    .mode-tab svg {
+      width: 1.8vmin;
+      height: 1.8vmin;
+    }
+    
+    /* Undo-Redo Button styling */
+    .undo-redo-btn-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5vmin;
+      background: rgba(24, 24, 35, 0.65);
+      padding: 0.5vmin 0.8vmin;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+    }
+    .undo-redo-btn {
+      background: transparent;
+      border: none;
+      color: #9494a8;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8vmin;
+      border-radius: 50%;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .undo-redo-btn:hover:not(:disabled) {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      transform: scale(1.05);
+    }
+    .undo-redo-btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+    .undo-redo-btn:disabled {
+      color: rgba(255, 255, 255, 0.12);
+      cursor: not-allowed;
+    }
+    .undo-redo-btn svg {
+      width: 1.8vmin;
+      height: 1.8vmin;
+    }
+
+    /* Looper Pad Grid Container */
+    .looper-grid-area {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 115vmin;
+      box-sizing: border-box;
+      gap: 1vmin;
+      margin: 1vmin auto 2.5vmin auto;
+      z-index: 10;
+      user-select: none;
+    }
+    
+    .looper-row {
+      display: grid;
+      grid-template-columns: 3.5vmin 16vmin 24vmin 1fr;
+      align-items: center;
+      width: 100%;
+      gap: 1.5vmin;
+      background: rgba(18, 18, 26, 0.55);
+      padding: 0.8vmin 1.2vmin;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 15px rgba(0, 0, 0, 0.25);
+      box-sizing: border-box;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .looper-row:hover {
+      background: rgba(22, 22, 32, 0.7);
+      border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .looper-row.dragging {
+      opacity: 0.45;
+      background: rgba(30, 30, 42, 0.4) !important;
+      border: 1px dashed rgba(255, 37, 246, 0.4) !important;
+      box-shadow: none !important;
+    }
+    
+    /* Drag Handle Gripper styling */
+    .drag-handle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3vmin;
+      height: 100%;
+      color: #55556a;
+      cursor: grab;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drag-handle:hover {
+      color: #9494a8;
+      transform: scale(1.1);
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    .drag-handle svg {
+      width: 2.2vmin;
+      height: 2.2vmin;
+    }
+    
+    .looper-label {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: 'Space Grotesk', 'Google Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.4vmin;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding-right: 1.2vmin;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      height: 100%;
+    }
+
+    /* Mixer Slider and Button layout styles */
+    .row-mixer-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.4vmin;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding-right: 1.4vmin;
+      height: 100%;
+    }
+    .volume-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.8vmin;
+      flex: 1;
+    }
+    .mixer-status-icon {
+      width: 1.8vmin;
+      height: 1.8vmin;
+      color: #6a6a7f;
+      flex-shrink: 0;
+    }
+    .row-volume-slider {
+      -webkit-appearance: none;
+      width: 10vmin;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .row-volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-color, #ff25f6);
+      box-shadow: 0 0 6px var(--accent-color, #ff25f6);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .row-volume-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+    .volume-percent {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 1.1vmin;
+      font-weight: 700;
+      color: #8a8a9e;
+      min-width: 4vmin;
+      text-align: right;
+    }
+    .mute-solo-group {
+      display: flex;
+      gap: 0.5vmin;
+    }
+    .mixer-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      color: #8a8a9e;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1vmin;
+      width: 2.3vmin;
+      height: 2.3vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mixer-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .mute-btn.active {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #ef4444 !important;
+      color: #ef4444 !important;
+      text-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+    }
+    .solo-btn.active {
+      background: rgba(245, 158, 11, 0.25) !important;
+      border-color: #f59e0b !important;
+      color: #f59e0b !important;
+      text-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
+    }
+    
+    .looper-label-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8vmin;
+      width: 100%;
+    }
+    
+    .category-icon {
+      width: 1.8vmin;
+      height: 1.8vmin;
+      opacity: 0.75;
+      flex-shrink: 0;
+    }
+    
+    .looper-label-sub {
+      font-size: 1.1vmin;
+      font-weight: 600;
+      color: #666;
+      text-transform: none;
+      letter-spacing: 0.3px;
+      margin-top: 0.3vmin;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 12.5vmin;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .looper-pads-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2vmin;
+      width: 100%;
+    }
+    
+    .loop-pad {
+      position: relative;
+      height: 7.2vmin;
+      background: rgba(26, 26, 36, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1vmin 1.6vmin;
+      box-sizing: border-box;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+    
+    .loop-pad:hover {
+      background: rgba(40, 40, 54, 0.85);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .loop-pad:active {
+      transform: scale(0.97);
+    }
+    
+    .loop-pad-name {
+      font-family: 'Space Grotesk', 'Google Sans', sans-serif;
+      font-size: 1.35vmin;
+      font-weight: 700;
+      color: #e5e5eb;
+      text-align: left;
+      line-height: 1.15;
+    }
+    
+    .loop-pad-desc {
+      font-size: 0.95vmin;
+      color: #7a7a8d;
+      text-align: left;
+      margin-top: 0.3vmin;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+    
+    .loop-pad.active {
+      border-color: var(--pad-color);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 14px var(--pad-color-shadow);
+      background: var(--pad-color-bg);
+    }
+    
+    .loop-pad.active .loop-pad-name {
+      color: #ffffff;
+      font-weight: 800;
+    }
+    
+    .loop-pad.active .loop-pad-desc {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Play progression ring */
+    .loop-progress-indicator {
+      position: absolute;
+      top: 0.8vmin;
+      right: 0.8vmin;
+      width: 1.8vmin;
+      height: 1.8vmin;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    .loop-pad.active .loop-progress-indicator {
+      opacity: 1;
+    }
+    
+    /* Equalizer Animating Bars for ACTIVE loops */
+    .eq-animation-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 1.6vmin;
+      position: absolute;
+      bottom: 0.8vmin;
+      right: 0.8vmin;
+      opacity: 0.75;
+    }
+    
+    .eq-bar {
+      display: inline-block;
+      width: 2px;
+      height: 1.4vmin;
+      background-color: var(--pad-color);
+      border-radius: 1px;
+      animation: bounce-eq-bar 0.8s ease-in-out infinite alternate;
+    }
+    
+    .eq-bar:nth-child(2) {
+      animation-delay: 0.15s;
+      animation-duration: 0.6s;
+    }
+    
+    .eq-bar:nth-child(3) {
+      animation-delay: 0.3s;
+      animation-duration: 0.9s;
+    }
+    
+    @keyframes bounce-eq-bar {
+      0% { transform: scaleY(0.25); }
+      100% { transform: scaleY(1.15); }
+    }
+    
+    /* Recording status HUD */
+    .recording-hud {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5vmin;
+      background: rgba(0, 0, 0, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.8vmin 2vmin;
+      border-radius: 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      z-index: 20;
+    }
+    
+    .timer-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6vmin;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    
+    .timer-display.blinking {
+      color: #ff3b30;
+      animation: blink 1s linear infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.4; }
+    }
+    
+    .rec-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 1vmin;
+      background: rgba(255, 59, 48, 0.12);
+      border: 1px solid rgba(255, 59, 48, 0.35);
+      color: #ff453a;
+      padding: 0.6vmin 1.8vmin;
+      border-radius: 20px;
+      font-size: 1.2vmin;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .rec-btn:hover {
+      background: rgba(255, 59, 48, 0.85);
+      color: #fff;
+      border-color: #ff3b30;
+      box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+    }
+    
+    .rec-btn.recording {
+      background: #ff3b30;
+      color: #fff;
+      border-color: #ff3b30;
+      animation: pulse-rec 1.5s infinite alternate;
+    }
+    
+    @keyframes pulse-rec {
+      0% { box-shadow: 0 0 4px rgba(255, 59, 48, 0.3); }
+      100% { box-shadow: 0 0 16px rgba(255, 59, 48, 0.85); }
+    }
+    
+    .rec-icon {
+      display: inline-block;
+      width: 1vmin;
+      height: 1vmin;
+    }
+    
+    .rec-icon.circle {
+      background: #ff3b30;
+      border-radius: 50%;
+    }
+    
+    .rec-btn:hover .rec-icon.circle {
+      background: #fff;
+    }
+    
+    .rec-icon.square {
+      background: #fff;
+      border-radius: 1px;
+    }
   `;
 
   @property({
@@ -1697,7 +2362,53 @@ class PromptDj extends LitElement {
   @state() private playbackState: PlaybackState = 'stopped';
   @property({type: Object})
   private filteredPrompts = new Set<string>();
-  private connectionError = true;
+  @state() private connectionError = true;
+  @state() private connectionErrorMessage = '';
+
+  @state() private viewMode: 'dj' | 'looper' = 'looper';
+  @state() private activePads: Record<string, number | null> = {
+    Bass: 0,
+    Beats: 0,
+    FX: null,
+    Guitar: null,
+    Keyboard: 1,
+    Synth: null
+  };
+  @state() private looperRowOrder: string[] = ['Bass', 'Beats', 'FX', 'Guitar', 'Keyboard', 'Synth'];
+  @state() private rowVolumes: Record<string, number> = {
+    Bass: 0.8,
+    Beats: 0.8,
+    FX: 0.8,
+    Guitar: 0.8,
+    Keyboard: 0.8,
+    Synth: 0.8
+  };
+  @state() private rowMuted: Record<string, boolean> = {
+    Bass: false,
+    Beats: false,
+    FX: false,
+    Guitar: false,
+    Keyboard: false,
+    Synth: false
+  };
+  @state() private rowSoloed: Record<string, boolean> = {
+    Bass: false,
+    Beats: false,
+    FX: false,
+    Guitar: false,
+    Keyboard: false,
+    Synth: false
+  };
+  private draggedCategory: string | null = null;
+  @state() private isRecording = false;
+  @state() private recordingDuration = 0;
+  private mediaRecorder: any = null;
+  private recordedChunks: BlobPart[] = [];
+  private recordingTimerId: any = null;
+
+  @state() private undoStack: HistorySnapshot[] = [];
+  @state() private redoStack: HistorySnapshot[] = [];
+  private lastPushTime = 0;
 
   @state() private savedSessions: SessionData[] = [];
   @state() private showSessionsModal = false;
@@ -1765,7 +2476,7 @@ class PromptDj extends LitElement {
   override async firstUpdated() {
     if (!(process.env.API_KEY || process.env.GEMINI_API_KEY)) {
       this.toastMessage.show('Gemini API key is missing. Please check your settings.');
-      console.error('API_KEY is not defined in the environment.');
+      console.warn('API_KEY is not defined in the environment.');
       return;
     }
     
@@ -1781,6 +2492,10 @@ class PromptDj extends LitElement {
       resizeObserver.observe(this.canvas.parentElement);
     }
 
+    if (this.viewMode === 'looper') {
+      this.syncLooperToPrompts();
+    }
+
     await this.connectToSession();
     this.startVisualization();
     this.loadSavedSessions();
@@ -1793,6 +2508,19 @@ class PromptDj extends LitElement {
     const draw = () => {
       this.animationId = requestAnimationFrame(draw);
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      // Update circular loaders on any active loop pads at 60fps
+      if (this.viewMode === 'looper' && this.playbackState === 'playing') {
+        const progress = (this.audioContext.currentTime % 4.0) / 4.0;
+        const pads = this.shadowRoot?.querySelectorAll('.loop-pad.active svg circle.progress-bar') as NodeListOf<SVGCircleElement>;
+        if (pads && pads.length > 0) {
+          const dashArray = 2 * Math.PI * 18; // approx 113.1
+          const dashOffset = dashArray * (1 - progress);
+          pads.forEach(pad => {
+            pad.style.strokeDashoffset = String(dashOffset);
+          });
+        }
+      }
 
       if (this.vizStyle === 'waveform') {
         this.analyserNode.getByteTimeDomainData(this.dataArray);
@@ -2024,7 +2752,7 @@ class PromptDj extends LitElement {
       this.toastMessage.show('Session saved locally!');
       this.loadSavedSessions();
     } catch (e) {
-      console.error(e);
+      console.warn('Failed to save session locally:', e);
       this.toastMessage.show('Failed to save session');
     }
   }
@@ -2034,11 +2762,13 @@ class PromptDj extends LitElement {
       const sessions = JSON.parse(localStorage.getItem('saved_sessions') || '[]');
       this.savedSessions = sessions.sort((a: SessionData, b: SessionData) => b.createdAt - a.createdAt);
     } catch (e) {
-      console.error(e);
+      console.warn('Failed to load sessions:', e);
     }
   }
 
   private async loadSession(sess: SessionData) {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
     this.prompts = new Map(sess.prompts.map(p => [p.promptId, p]));
     this.nextPromptId = Math.max(...sess.prompts.map(p => {
         const id = parseInt(p.promptId.replace('prompt-', ''));
@@ -2059,8 +2789,331 @@ class PromptDj extends LitElement {
       localStorage.setItem('saved_sessions', JSON.stringify(filtered));
       this.loadSavedSessions();
     } catch (e) {
-      console.error(e);
+      console.warn('Failed to delete session:', e);
     }
+  }
+
+  private handleVolumeChange(category: string, value: number) {
+    const now = Date.now();
+    if (now - this.lastPushTime > 1200) {
+      this.pushStateToHistory();
+      this.lastPushTime = now;
+    }
+    this.rowVolumes[category] = value;
+    this.rowVolumes = { ...this.rowVolumes };
+    this.syncLooperToPrompts();
+  }
+
+  private toggleMute(category: string) {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
+    
+    this.rowMuted[category] = !this.rowMuted[category];
+    this.rowMuted = { ...this.rowMuted };
+    if (this.rowMuted[category]) {
+      this.rowSoloed[category] = false;
+      this.rowSoloed = { ...this.rowSoloed };
+    }
+    
+    this.syncLooperToPrompts();
+  }
+
+  private toggleSolo(category: string) {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
+    
+    this.rowSoloed[category] = !this.rowSoloed[category];
+    this.rowSoloed = { ...this.rowSoloed };
+    if (this.rowSoloed[category]) {
+      this.rowMuted[category] = false;
+      this.rowMuted = { ...this.rowMuted };
+    }
+    
+    this.syncLooperToPrompts();
+  }
+
+  private handleDragStart(e: DragEvent, category: string) {
+    this.draggedCategory = category;
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', category);
+    }
+    const rowEl = (e.currentTarget as HTMLElement).closest('.looper-row');
+    if (rowEl) {
+      rowEl.classList.add('dragging');
+    }
+  }
+
+  private handleDragOver(e: DragEvent, targetCategory: string) {
+    e.preventDefault();
+    if (!this.draggedCategory || this.draggedCategory === targetCategory) return;
+    
+    const fromIndex = this.looperRowOrder.indexOf(this.draggedCategory);
+    const toIndex = this.looperRowOrder.indexOf(targetCategory);
+    if (fromIndex !== -1 && toIndex !== -1) {
+      const newOrder = [...this.looperRowOrder];
+      newOrder.splice(fromIndex, 1);
+      newOrder.splice(toIndex, 0, this.draggedCategory);
+      this.looperRowOrder = newOrder;
+      this.requestUpdate();
+    }
+  }
+
+  private handleDragEnd(e: DragEvent) {
+    this.draggedCategory = null;
+    const rows = this.renderRoot.querySelectorAll('.looper-row');
+    rows.forEach(r => {
+      r.classList.remove('dragging');
+      r.setAttribute('draggable', 'false');
+    });
+  }
+
+  private handleDrop(e: DragEvent, targetCategory: string) {
+    e.preventDefault();
+    this.draggedCategory = null;
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
+    this.requestUpdate();
+  }
+
+  private pushStateToHistory() {
+    const copiedPrompts = new Map<string, Prompt>();
+    this.prompts.forEach((v, k) => {
+      copiedPrompts.set(k, { ...v });
+    });
+
+    const snapshot: HistorySnapshot = {
+      prompts: copiedPrompts,
+      activePads: { ...this.activePads },
+      viewMode: this.viewMode,
+      looperRowOrder: [ ...this.looperRowOrder ],
+      rowVolumes: { ...this.rowVolumes },
+      rowMuted: { ...this.rowMuted },
+      rowSoloed: { ...this.rowSoloed }
+    };
+
+    this.undoStack = [...this.undoStack, snapshot];
+    this.redoStack = [];
+
+    if (this.undoStack.length > 50) {
+      this.undoStack = this.undoStack.slice(1);
+    }
+  }
+
+  private handleUndo() {
+    if (this.undoStack.length === 0) {
+      this.toastMessage.show('Nothing to undo');
+      return;
+    }
+
+    const currentCopied = new Map<string, Prompt>();
+    this.prompts.forEach((v, k) => {
+      currentCopied.set(k, { ...v });
+    });
+
+    const currentSnapshot: HistorySnapshot = {
+      prompts: currentCopied,
+      activePads: { ...this.activePads },
+      viewMode: this.viewMode,
+      looperRowOrder: [ ...this.looperRowOrder ],
+      rowVolumes: { ...this.rowVolumes },
+      rowMuted: { ...this.rowMuted },
+      rowSoloed: { ...this.rowSoloed }
+    };
+
+    const previousState = this.undoStack[this.undoStack.length - 1];
+    this.undoStack = this.undoStack.slice(0, -1);
+    this.redoStack = [...this.redoStack, currentSnapshot];
+
+    this.prompts = previousState.prompts;
+    this.activePads = previousState.activePads;
+    this.viewMode = previousState.viewMode;
+    this.looperRowOrder = previousState.looperRowOrder;
+    this.rowVolumes = previousState.rowVolumes;
+    this.rowMuted = previousState.rowMuted;
+    this.rowSoloed = previousState.rowSoloed;
+
+    this.requestUpdate();
+    this.setSessionPrompts();
+    this.dispatchPromptsChange();
+    this.toastMessage.show('Action undone');
+  }
+
+  private handleRedo() {
+    if (this.redoStack.length === 0) {
+      this.toastMessage.show('Nothing to redo');
+      return;
+    }
+
+    const currentCopied = new Map<string, Prompt>();
+    this.prompts.forEach((v, k) => {
+      currentCopied.set(k, { ...v });
+    });
+
+    const currentSnapshot: HistorySnapshot = {
+      prompts: currentCopied,
+      activePads: { ...this.activePads },
+      viewMode: this.viewMode,
+      looperRowOrder: [ ...this.looperRowOrder ],
+      rowVolumes: { ...this.rowVolumes },
+      rowMuted: { ...this.rowMuted },
+      rowSoloed: { ...this.rowSoloed }
+    };
+
+    const nextState = this.redoStack[this.redoStack.length - 1];
+    this.redoStack = this.redoStack.slice(0, -1);
+    this.undoStack = [...this.undoStack, currentSnapshot];
+
+    this.prompts = nextState.prompts;
+    this.activePads = nextState.activePads;
+    this.viewMode = nextState.viewMode;
+    this.looperRowOrder = nextState.looperRowOrder;
+    this.rowVolumes = nextState.rowVolumes;
+    this.rowMuted = nextState.rowMuted;
+    this.rowSoloed = nextState.rowSoloed;
+
+    this.requestUpdate();
+    this.setSessionPrompts();
+    this.dispatchPromptsChange();
+    this.toastMessage.show('Action redone');
+  }
+
+  private setViewMode(mode: 'dj' | 'looper') {
+    this.viewMode = mode;
+    if (mode === 'looper') {
+      this.syncLooperToPrompts();
+    }
+    this.requestUpdate();
+    this.toastMessage.show(`Switched to ${mode === 'looper' ? 'BandLab Looper' : 'Classic DJ'}`);
+  }
+
+  private togglePad(category: string, index: number) {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
+    if (this.activePads[category] === index) {
+      this.activePads[category] = null;
+    } else {
+      this.activePads[category] = index;
+    }
+    this.activePads = {...this.activePads};
+    this.syncLooperToPrompts();
+    
+    // Auto-play if not already playing, to make looper intuitive!
+    if (this.playbackState !== 'playing' && this.playbackState !== 'loading') {
+      this.handlePlayPause();
+    }
+  }
+
+  private async syncLooperToPrompts() {
+    const newPrompts = new Map(this.prompts);
+    
+    // Clear any existing looper prompts
+    for (const id of newPrompts.keys()) {
+      if (id.startsWith('looper-')) {
+        newPrompts.delete(id);
+      }
+    }
+    
+    const hasAnySolo = Object.values(this.rowSoloed).some(v => v);
+    
+    // Append active pads as looper prompts
+    LOOPER_ROWS.forEach(row => {
+      const activeIdx = this.activePads[row.category];
+      if (activeIdx !== null && activeIdx !== undefined) {
+        const pad = row.pads[activeIdx];
+        const promptId = `looper-${row.category}`;
+        
+        let calculatedWeight = pad.volume * (this.rowVolumes[row.category] ?? 0.8);
+        
+        // Mute / Solo logic integration
+        const isMuted = this.rowMuted[row.category];
+        const isSoloed = this.rowSoloed[row.category];
+        if (isMuted || (hasAnySolo && !isSoloed)) {
+          calculatedWeight = 0;
+        }
+
+        newPrompts.set(promptId, {
+          promptId,
+          text: pad.prompt,
+          weight: calculatedWeight,
+          color: row.color
+        });
+      }
+    });
+    
+    this.prompts = newPrompts;
+    this.requestUpdate();
+    
+    await this.setSessionPrompts();
+    this.dispatchPromptsChange();
+  }
+
+  private formatTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  private startRecording() {
+    this.recordedChunks = [];
+    const dest = this.audioContext.createMediaStreamDestination();
+    this.analyserNode.connect(dest);
+    
+    const options = { mimeType: 'audio/webm' };
+    try {
+      this.mediaRecorder = new (window as any).MediaRecorder(dest.stream, options);
+    } catch (e) {
+      this.mediaRecorder = new (window as any).MediaRecorder(dest.stream);
+    }
+    
+    this.mediaRecorder.ondataavailable = (ev: any) => {
+      if (ev.data.size > 0) {
+        this.recordedChunks.push(ev.data);
+      }
+    };
+    
+    this.mediaRecorder.onstop = () => {
+      const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bandlab-looper-mix-${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      this.toastMessage.show('Live recording saved and downloaded successfully!');
+    };
+    
+    this.mediaRecorder.start(100);
+    this.isRecording = true;
+    this.recordingDuration = 0;
+    this.recordingTimerId = setInterval(() => {
+      this.recordingDuration += 1;
+      this.requestUpdate();
+    }, 1000);
+    
+    this.toastMessage.show('Recording live session...');
+    
+    // Auto-trigger playback if stopped
+    if (this.playbackState !== 'playing' && this.playbackState !== 'loading') {
+      this.handlePlayPause();
+    }
+  }
+
+  private stopRecording() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+    this.isRecording = false;
+    if (this.recordingTimerId) {
+      clearInterval(this.recordingTimerId);
+      this.recordingTimerId = null;
+    }
+    this.toastMessage.show('Saving your recording...');
   }
 
   private async connectToSession() {
@@ -2078,6 +3131,8 @@ class PromptDj extends LitElement {
             console.log('Received message from the server:', e);
             if (e.setupComplete) {
               this.connectionError = false;
+              this.connectionErrorMessage = '';
+              this.requestUpdate();
             }
             if (e.filteredPrompt) {
               this.filteredPrompts = new Set([
@@ -2122,23 +3177,29 @@ class PromptDj extends LitElement {
             }
           },
           onerror: (e: any) => {
-            console.error('Error occurred:', e);
+            console.warn('Error occurred (handled):', e);
             this.connectionError = true;
+            this.connectionErrorMessage = e?.message || e?.error?.message || 'The Lyria music service is currently unavailable.';
             this.stopAudio();
-            this.toastMessage.show('Connection error: ' + (e.message || 'Unknown error'));
+            this.toastMessage.show('Connection error: ' + (e?.message || 'Unknown error'));
+            this.requestUpdate();
           },
           onclose: (e: any) => {
             console.log('Connection closed:', e);
             this.connectionError = true;
+            this.connectionErrorMessage = e?.reason ? `Connection closed: ${e.reason}` : 'The Lyria music service server closed its connection.';
             this.stopAudio();
             this.toastMessage.show('Connection closed.');
+            this.requestUpdate();
           },
         },
       });
-    } catch (err) {
-      console.error('Failed to connect to music session:', err);
+    } catch (err: any) {
+      console.warn('Failed to connect to music session (handled):', err);
       this.connectionError = true;
+      this.connectionErrorMessage = err?.message || 'Failed to connect to server. The service is currently unavailable.';
       this.toastMessage.show('Failed to connect to server.');
+      this.requestUpdate();
     }
   }
 
@@ -2172,8 +3233,14 @@ class PromptDj extends LitElement {
     const prompt = this.prompts.get(promptId);
 
     if (!prompt) {
-      console.error('prompt not found', promptId);
+      console.warn('prompt not found', promptId);
       return;
+    }
+
+    const now = Date.now();
+    if (now - this.lastPushTime > 1200) {
+      this.pushStateToHistory();
+      this.lastPushTime = now;
     }
 
     prompt.text = text;
@@ -2270,6 +3337,8 @@ class PromptDj extends LitElement {
   }
 
   private async handleAddPrompt() {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
     const newPromptId = `prompt-${this.nextPromptId++}`;
     const usedColors = [...this.prompts.values()].map((p) => p.color);
     const newPrompt: Prompt = {
@@ -2318,6 +3387,8 @@ class PromptDj extends LitElement {
     e.stopPropagation();
     const promptIdToRemove = e.detail;
     if (this.prompts.has(promptIdToRemove)) {
+      this.pushStateToHistory();
+      this.lastPushTime = 0;
       this.prompts.delete(promptIdToRemove);
       const newPrompts = new Map(this.prompts);
       this.prompts = newPrompts;
@@ -2368,6 +3439,30 @@ class PromptDj extends LitElement {
       <div id="background" style=${styleMap({background: this.makeBackground()})}></div>
       <div class="viz-container">
         <canvas id="visualizer" width="800" height="400"></canvas>
+        ${this.connectionError ? html`
+          <div class="connection-status-overlay">
+            <div class="connection-status-badge">
+              <span class="status-dot offline"></span>
+              <span class="status-text">Service Temporarily Offline / Connecting...</span>
+            </div>
+            ${this.connectionErrorMessage ? html`
+              <p class="connection-error-desc">${this.connectionErrorMessage}</p>
+            ` : html`
+              <p class="connection-error-desc">The Google GenAI Lyria realtime service is currently unavailable or connecting. Please check your API key, ensure the model is accessible, or try reconnecting below.</p>
+            `}
+            <button class="retry-connect-btn" @click=${this.connectToSession}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Reconnect to Lyria
+            </button>
+          </div>
+        ` : html`
+          <div class="connection-status-overlay success">
+            <div class="connection-status-badge success">
+              <span class="status-dot online"></span>
+              <span class="status-text">Connected to Lyria Live Music</span>
+            </div>
+          </div>
+        `}
         <div class="viz-menu" style="pointer-events: auto;">
           <button class="viz-menu-btn ${this.vizStyle === 'waveform' ? 'active' : ''}" @click=${() => this.vizStyle = 'waveform'}>Waveform</button>
           <button class="viz-menu-btn ${this.vizStyle === 'bar' ? 'active' : ''}" @click=${() => this.vizStyle = 'bar'}>Bar Graph</button>
@@ -2389,30 +3484,214 @@ class PromptDj extends LitElement {
         </div>
       </div>
 
-      <div class="presets-container">
-        <div class="presets-tabs">
-          <button class="preset-tab-btn ${this.activePresetCategory === 'Genres' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Genres'}>Genres</button>
-          <button class="preset-tab-btn ${this.activePresetCategory === 'Instruments' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Instruments'}>Instruments</button>
-          <button class="preset-tab-btn ${this.activePresetCategory === 'Effects & Feel' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Effects & Feel'}>Effects & Feel</button>
+      <!-- Segmented View Mode Tabs & Live Audio Recording HUD -->
+      <div class="mode-selector">
+        <button class="mode-tab ${this.viewMode === 'looper' ? 'active' : ''}" @click=${() => this.setViewMode('looper')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          BandLab style Looper
+        </button>
+        <button class="mode-tab ${this.viewMode === 'dj' ? 'active' : ''}" @click=${() => this.setViewMode('dj')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3.5"></circle></svg>
+          Classic DJ Controller
+        </button>
+
+        <!-- Undo & Redo Action Buttons -->
+        <div class="undo-redo-btn-group" style="margin-left: 1.5vmin;">
+          <button
+            class="undo-redo-btn"
+            title="Undo prompt adjustment (Ctrl+Z)"
+            ?disabled=${this.undoStack.length === 0}
+            @click=${this.handleUndo}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6" />
+              <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" />
+            </svg>
+          </button>
+          <button
+            class="undo-redo-btn"
+            title="Redo prompt adjustment (Ctrl+Y)"
+            ?disabled=${this.redoStack.length === 0}
+            @click=${this.handleRedo}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 7v6h-6" />
+              <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7" />
+            </svg>
+          </button>
         </div>
-        <div class="preset-genre-list">
-          ${PRESET_CATEGORIES[this.activePresetCategory].map(item => html`
-            <button class="preset-btn" @click=${() => this.handleAddPromptWithText(item.name, item.defaultVolume)}>${item.name}</button>
-          `)}
+        
+        <div class="recording-hud" style="margin-left: 2.5vmin;">
+          <div class="timer-display ${this.isRecording ? 'blinking' : ''}">
+            ${this.formatTime(this.recordingDuration)}
+          </div>
+          ${this.isRecording ? html`
+            <button class="rec-btn recording" @click=${this.stopRecording}>
+              <span class="rec-icon square"></span>
+              Stop Rec
+            </button>
+          ` : html`
+            <button class="rec-btn" @click=${this.startRecording}>
+              <span class="rec-icon circle"></span>
+              Record Live Mix
+            </button>
+          `}
         </div>
       </div>
 
-      <div class="prompts-area">
-        <div id="prompts-container"
-          @prompt-removed=${this.handlePromptRemoved}
-          @wheel=${this.handlePromptsContainerWheel}>
-          ${this.renderPrompts()}
+      ${this.viewMode === 'looper' ? html`
+        <!-- BandLab Looper Grid Area -->
+        <div class="looper-grid-area">
+          ${this.looperRowOrder.map(category => {
+            const row = LOOPER_ROWS.find(r => r.category === category);
+            if (!row) return '';
+            
+            const activeIdx = this.activePads[row.category];
+            const icon = CATEGORY_ICONS[row.category as keyof typeof CATEGORY_ICONS] || '';
+            const rowVol = this.rowVolumes[row.category] ?? 0.8;
+            const isMuted = this.rowMuted[row.category];
+            const isSoloed = this.rowSoloed[row.category];
+            
+            return html`
+              <div class="looper-row"
+                @dragover=${(e: DragEvent) => this.handleDragOver(e, row.category)}
+                @drop=${(e: DragEvent) => this.handleDrop(e, row.category)}>
+                
+                <!-- Dynamic Grab Handle Column -->
+                <div class="drag-handle"
+                  title="Drag and drop to reorder categories"
+                  @mousedown=${(e: MouseEvent) => {
+                    const rowEl = (e.currentTarget as HTMLElement).closest('.looper-row');
+                    if (rowEl) rowEl.setAttribute('draggable', 'true');
+                  }}
+                  @mouseup=${(e: MouseEvent) => {
+                    const rowEl = (e.currentTarget as HTMLElement).closest('.looper-row');
+                    if (rowEl) rowEl.setAttribute('draggable', 'false');
+                  }}
+                  @dragstart=${(e: DragEvent) => this.handleDragStart(e, row.category)}
+                  @dragend=${this.handleDragEnd}>
+                  <svg viewBox="0 0 24 24" fill="none" class="drag-handle-icon" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/>
+                    <circle cx="15" cy="5" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                  </svg>
+                </div>
+
+                <!-- Label with category details -->
+                <div class="looper-label" style="color: ${row.color};">
+                  <div class="looper-label-header">
+                    ${icon}
+                    <span>${row.category}</span>
+                  </div>
+                  <div class="looper-label-sub">
+                    ${activeIdx !== null ? row.pads[activeIdx].name : 'Muted'}
+                  </div>
+                </div>
+
+                <!-- Mixer panel (volume range slider & mute / solo buttons) -->
+                <div class="row-mixer-controls">
+                  <div class="volume-slider-container">
+                    <svg viewBox="0 0 24 24" fill="none" class="mixer-status-icon" stroke="currentColor" stroke-width="2.5">
+                      ${rowVol === 0 || isMuted ? html`
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <path d="M23 9l-6 6M17 9l6 6"/>
+                      ` : html`
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                      `}
+                    </svg>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      .value=${rowVol}
+                      @input=${(e: InputEvent) => this.handleVolumeChange(row.category, parseFloat((e.target as HTMLInputElement).value))}
+                      class="row-volume-slider"
+                      style="--accent-color: ${row.color}"
+                    />
+                    <span class="volume-percent">${Math.round(rowVol * 100)}%</span>
+                  </div>
+
+                  <div class="mute-solo-group">
+                    <button
+                      class="mixer-btn mute-btn ${isMuted ? 'active' : ''}"
+                      title="Mute ${row.category}"
+                      @click=${() => this.toggleMute(row.category)}>
+                      M
+                    </button>
+                    <button
+                      class="mixer-btn solo-btn ${isSoloed ? 'active' : ''}"
+                      title="Solo ${row.category}"
+                      @click=${() => this.toggleSolo(row.category)}>
+                      S
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Pad controller slots -->
+                <div class="looper-pads-container">
+                  ${row.pads.map((pad, idx) => {
+                    const isActive = activeIdx === idx;
+                    const style = styleMap({
+                      '--pad-color': row.color,
+                      '--pad-color-bg': `${row.color}1c`,
+                      '--pad-color-shadow': `${row.color}15`
+                    });
+                    return html`
+                      <button
+                        class="loop-pad ${isActive ? 'active' : ''}"
+                        style=${style}
+                        @click=${() => this.togglePad(row.category, idx)}>
+                        <div class="loop-pad-name">${pad.name}</div>
+                        <div class="loop-pad-desc">${pad.prompt}</div>
+                        
+                        <!-- Dynamic Clock SVG Progress ring -->
+                        <svg class="loop-progress-indicator" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"></circle>
+                          <circle class="progress-bar" cx="20" cy="20" r="18" fill="none" stroke="${row.color}" stroke-dasharray="113.1" stroke-dashoffset="113.1" stroke-width="3.5" stroke-linecap="round"></circle>
+                        </svg>
+
+                        <!-- Equalizer Animating Bars for ACTIVE loops -->
+                        ${isActive ? html`
+                          <div class="eq-animation-container">
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                          </div>
+                        ` : ''}
+                      </button>
+                    `;
+                  })}
+                </div>
+              </div>
+            `;
+          })}
         </div>
-        <div class="add-prompt-button-container">
-          <add-prompt-button @click=${this.handleAddPrompt}></add-prompt-button>
-          <button class="clear-all-btn" @click=${this.handleClearAll}>Clear All</button>
+      ` : html`
+        <!-- Classic DJ Mode UI elements -->
+        <div class="presets-container">
+          <div class="presets-tabs">
+            <button class="preset-tab-btn ${this.activePresetCategory === 'Genres' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Genres'}>Genres</button>
+            <button class="preset-tab-btn ${this.activePresetCategory === 'Instruments' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Instruments'}>Instruments</button>
+            <button class="preset-tab-btn ${this.activePresetCategory === 'Effects & Feel' ? 'active' : ''}" @click=${() => this.activePresetCategory = 'Effects & Feel'}>Effects & Feel</button>
+          </div>
+          <div class="preset-genre-list">
+            ${PRESET_CATEGORIES[this.activePresetCategory].map(item => html`
+              <button class="preset-btn" @click=${() => this.handleAddPromptWithText(item.name, item.defaultVolume)}>${item.name}</button>
+            `)}
+          </div>
         </div>
-      </div>
+
+        <div class="prompts-area">
+          <div id="prompts-container"
+            @prompt-removed=${this.handlePromptRemoved}
+            @wheel=${this.handlePromptsContainerWheel}>
+            ${this.renderPrompts()}
+          </div>
+          <div class="add-prompt-button-container">
+            <add-prompt-button @click=${this.handleAddPrompt}></add-prompt-button>
+            <button class="clear-all-btn" @click=${this.handleClearAll}>Clear All</button>
+          </div>
+        </div>
+      `}
 
       <div id="settings-container">
         <settings-controller
@@ -2447,6 +3726,8 @@ class PromptDj extends LitElement {
   }
 
   private async handleAddPromptWithText(text: string, defaultVolume = 0.5) {
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
     const newPromptId = `prompt-${this.nextPromptId++}`;
     const usedColors = [...this.prompts.values()].map((p) => p.color);
     const newPrompt: Prompt = {
@@ -2468,6 +3749,8 @@ class PromptDj extends LitElement {
     if (!confirm('Are you sure you want to clear all prompts and reset to a clean state?')) {
       return;
     }
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
     this.prompts = new Map();
     this.nextPromptId = 0;
     this.setSessionPrompts();
@@ -2478,6 +3761,8 @@ class PromptDj extends LitElement {
 
   private resetApp() {
     if (!confirm('Reset everything?')) return;
+    this.pushStateToHistory();
+    this.lastPushTime = 0;
     this.prompts = new Map();
     this.nextPromptId = 0;
     this.settingsController.resetToDefaults();
@@ -2517,7 +3802,7 @@ function getStoredPrompts(): Map<string, Prompt> {
       console.log('Loading stored prompts', prompts);
       return new Map(prompts.map((prompt) => [prompt.promptId, prompt]));
     } catch (e) {
-      console.error('Failed to parse stored prompts', e);
+      console.warn('Failed to parse stored prompts', e);
     }
   }
 

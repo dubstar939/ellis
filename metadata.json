@@ -1,7 +1,7 @@
 {
   "name": "Ellis",
-  "description": "Electronic Slide Music Maker",
+  "description": "Real-time AI Music Creator and BandLab-style looper with live mix recorder.",
   "requestFramePermissions": [],
   "prompt": "",
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
